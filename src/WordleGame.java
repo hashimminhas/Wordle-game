@@ -1,18 +1,16 @@
 import io.WordReader;
+import java.util.List;
 import java.util.Scanner;
 public class WordleGame{
 
     public static void main(String[] args) {
 
+        Scanner scanner = new Scanner(System.in);  // Initialize scanner for user input
 
-        // Initialize scanner for user input
-        Scanner scanner = new Scanner(System.in);
+        WordleGame game = new WordleGame();    // Main method to start the game
 
-        // Main method to start the game
-        WordleGame game = new WordleGame();
-
+        game.showAvailableWords(); // Show all available words for testing
         game.run(scanner, args);
-
         scanner.close();
 
     }
@@ -41,8 +39,8 @@ public class WordleGame{
         WordReader wordReader = new WordReader("wordle-words.txt"); // Create WordReader instance
         String secretWord = wordReader.getWordByIndex(wordIndex); // Get secret word by
 
-        // Handle errors gracefully
-        if (secretWord == null) {
+
+        if (secretWord == null) {  // Handle errors gracefully
             System.out.println("Error: Could not load word. Please check the word file.");
             return; // Exit gracefully
         }
@@ -77,8 +75,8 @@ public class WordleGame{
 
             System.out.println("Your guess: " + guess); // Display the guess
 
-            // Check if correct
-            if (guess.equals(secretWord)) {
+
+            if (guess.equals(secretWord)) {  // Check if correct
                 hasWon = true;
                 System.out.println("You won in " + attemptsCount + " attempts!");
             } else {
@@ -90,5 +88,21 @@ public class WordleGame{
             }
         }
     }
+
+    public void showAvailableWords() {    // Temporary helper to see all available words
+        WordReader reader = new WordReader("wordle-words.txt");
+        List<String> words = reader.readWords();
+
+        if (words == null) {
+            System.out.println("No words found!");
+            return;
+        }
+
+        System.out.println("Available words (" + words.size() + " total):");
+        for (int i = 0; i < words.size(); i++) {
+            System.out.println(i + ": " + words.get(i));
+        }
+    }
+
 
 }
