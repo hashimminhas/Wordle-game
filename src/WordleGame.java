@@ -1,5 +1,5 @@
+import io.WordReader;
 import java.util.Scanner;
-
 public class WordleGame{
 
     public static void main(String[] args) {
@@ -38,9 +38,17 @@ public class WordleGame{
 
         }
 
+        WordReader wordReader = new WordReader("wordle-words.txt"); // Create WordReader instance
+        String secretWord = wordReader.getWordByIndex(wordIndex); // Get secret word by
 
+        // Handle errors gracefully
+        if (secretWord == null) {
+            System.out.println("Error: Could not load word. Please check the word file.");
+            return; // Exit gracefully
+        }
 
-        String secretWord = "CRANE"; // Placeholder for secret word based on index
+        System.out.println("Word loaded successfully!"); // For testing, remove later
+
 
         System.out.println("Enter your username: "); // Prompt for username
         String username = "";
