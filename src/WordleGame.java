@@ -33,10 +33,54 @@ public class WordleGame{
                 return;
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid word index. Please provide a valid integer.");
+            System.out.println("Error: Word index must be a number.");
+            return;
+
+        }
+
+
+
+        String secretWord = "CRANE"; // Placeholder for secret word based on index
+
+        System.out.println("Enter your username: "); // Prompt for username
+        String username = "";
+        if(scanner.hasNextLine()){
+            username = scanner.nextLine().trim();
+        }else{
             return;
         }
 
-        System.out.println("Using word index: " + wordIndex );
+        System.out.println("\nGuess the word! You have 6 attempts."); // Game instructions
+
+        int maxAttempts = 6;
+        int attemptsCount = 0;
+        boolean hasWon = false;
+
+        while(attemptsCount < maxAttempts && !hasWon){
+            attemptsCount++;
+
+            System.out.print("Enter your guess: "); // Prompt for guess
+
+
+            if(!scanner.hasNextLine()){
+                break;
+            }
+            String guess = scanner.nextLine().trim().toUpperCase();
+
+            System.out.println("Your guess: " + guess); // Display the guess
+
+            // Check if correct
+            if (guess.equals(secretWord)) {
+                hasWon = true;
+                System.out.println("You won in " + attemptsCount + " attempts!");
+            } else {
+                System.out.println("Attempts remaining: " + (maxAttempts - attemptsCount));
+            }
+
+            if(!hasWon){
+                System.out.print("\nGame over, The word was: " + secretWord + "\n" );
+            }
+        }
     }
+
 }
