@@ -82,7 +82,7 @@ KoodWordle/
 ├── WordleGame.java    # Main game file with argument validation
 ├── game/              # (Future: Game logic)
 ├── io/                # (Future: Input/Output handling)
-├── modle/             # (Future: Data models)
+├── model/             # (Future: Data models)
 └── README.md          # Project documentation
 ```
 

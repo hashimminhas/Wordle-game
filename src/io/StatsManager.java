@@ -97,14 +97,20 @@ public class StatsManager {
             return;
         }
 
-        System.out.println("\n=== Stats for " + username + " ===");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       Stats for " + padRight(username, 23) + "║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         int wins = 0;
         int losses = 0;
         int totalAttempts = 0;
 
-        for (GameStats stats : userStats) {
-            System.out.println(stats);
+        System.out.println("\nGame History:");
+        for (int i = 0; i < userStats.size(); i++) {
+            GameStats stats = userStats.get(i);
+            System.out.printf("%d. %s - %d attempts - %s\n",
+                    i + 1, stats.getSecretWord(), stats.getAttempts(),
+                    stats.getResult().toUpperCase());
 
             if (stats.getResult().equals("win")) {
                 wins++;
@@ -114,14 +120,29 @@ public class StatsManager {
             }
         }
 
-        System.out.println("\nSummary:");
-        System.out.println("Games played: " + userStats.size());
-        System.out.println("Wins: " + wins);
-        System.out.println("Losses: " + losses);
+        System.out.println("\n────────────────────────────────────────");
+        System.out.println("Summary:");
+        System.out.println("  Games played: " + userStats.size());
+        System.out.println("  Wins:         " + wins);
+        System.out.println("  Losses:       " + losses);
+
+        if (userStats.size() > 0) {
+            double winRate = ((double) wins / userStats.size()) * 100;
+            System.out.printf("  Win rate:     %.1f%%\n", winRate);
+        }
 
         if (wins > 0) {
             double avgAttempts = (double) totalAttempts / wins;
-            System.out.printf("Average attempts to win: %.2f\n", avgAttempts);
+            System.out.printf("  Avg attempts: %.2f\n", avgAttempts);
         }
+        System.out.println("────────────────────────────────────────");
+        System.out.println("\nThanks for playing!");
+    }
+
+    /**
+     * Helper method to pad string to right
+     */
+    private String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
     }
 }

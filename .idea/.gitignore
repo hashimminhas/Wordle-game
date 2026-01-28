@@ -25,3 +25,37 @@ stats.csv
 # OS files
 .DS_Store
 Thumbs.db
+
+# Compiled files
+*.class
+
+# Word list (not to be committed)
+wordle-words.txt
+
+# Stats file
+stats.csv
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.classpath
+*.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build directories
+bin/
+out/
+target/
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*~

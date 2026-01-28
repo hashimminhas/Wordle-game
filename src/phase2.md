@@ -77,7 +77,7 @@ KoodWordle/
 │   └── WordReader.java       # File I/O handler
 ├── wordle-words.txt          # Word list (5-letter words)
 ├── game/                     # (Reserved for future game logic)
-├── modle/                    # (Reserved for future data models)
+├── model/                    # (Reserved for future data models)
 └── README.md                 # Phase 1 documentation
 ```
 

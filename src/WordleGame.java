@@ -1,10 +1,10 @@
 import game.FeedbackProvider;
 import game.LetterTracker;
 import game.WordValidator;
-import io.WordReader;
 import io.StatsManager;
-import model.GameStats;
+import io.WordReader;
 import java.util.Scanner;
+import model.GameStats;
 
 public class WordleGame{
 
@@ -112,6 +112,8 @@ public class WordleGame{
 
             if (response.equals("yes") || response.equals("y")) {
                 statsManager.displayUserStats(username);
+            } else {
+                System.out.println("\nThanks for playing!");
             }
         }
 
