@@ -1,0 +1,3 @@
+echo "TestUser`nSTONE`nCRANE" | java WordleGame 0,CRANE,1,win
+DemoUser,CRANE,1,win
+hashim,BAKER,6,loss
