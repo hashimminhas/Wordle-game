@@ -9,18 +9,18 @@ import java.util.List;
 public class WordReader {
 
     private String filename;
-
+    
     public WordReader(String filename){  // Constructor to initialize filename
-        this.filename = filename;
+        this.filename = filename;  
     }
 
     public List<String> readWords(){   // Method to read words from the file
         List<String> words = new ArrayList<>();  // List to store words read from file
-
+        
         try(BufferedReader reader = new BufferedReader(new FileReader(filename))){  // Try-with-resources to ensure file is closed
             String line;
             while((line = reader.readLine()) !=null){  // Read each line
-
+  
                 String word = line.trim().toUpperCase();  // Trim whitespace and convert to uppercase
 
                 if(word.length() == 5){
@@ -48,10 +48,10 @@ public class WordReader {
             return null;
         }
         return words.get(index);     // Return word at specified index
-    }
+    } 
 
     public int getWordCount(){   // Method to get total number of words
-        List<String> words = readWords();
+        List<String> words = readWords();  
         return words != null ? words.size() : 0;   // Return size or 0 if null
     }
 }
