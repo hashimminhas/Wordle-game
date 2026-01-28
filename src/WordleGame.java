@@ -2,6 +2,8 @@ import game.FeedbackProvider;
 import game.LetterTracker;
 import game.WordValidator;
 import io.WordReader;
+import io.StatsManager;
+import model.GameStats;
 import java.util.Scanner;
 
 public class WordleGame{
@@ -95,6 +97,22 @@ public class WordleGame{
 
         if(!hasWon){
             System.out.print("\nGame over, The word was: " + secretWord + "\n" );
+        }
+
+        StatsManager statsManager = new StatsManager("stats.csv");
+        String result = hasWon ? "win" : "loss";
+        GameStats gameStats = new GameStats(username, secretWord, attemptsCount, result);
+        statsManager.saveGameStats(gameStats);
+
+        // Ask if user wants to view stats
+        System.out.print("\nWould you like to see your stats? (yes/no): ");
+
+        if (scanner.hasNextLine()) {
+            String response = scanner.nextLine().trim().toLowerCase();
+
+            if (response.equals("yes") || response.equals("y")) {
+                statsManager.displayUserStats(username);
+            }
         }
 
     }
