@@ -8,3 +8,20 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+# Compiled files
+*.class
+
+# Word list (not to be committed)
+wordle-words.txt
+
+# Stats file
+stats.csv
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
