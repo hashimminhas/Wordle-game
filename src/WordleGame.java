@@ -40,12 +40,11 @@ public class WordleGame{
             return;
         }
 
-        System.out.println("Word loaded successfully!");                                      // For testing, remove later
         FeedbackProvider feedbackProvider = new FeedbackProvider();
         WordValidator validator = new WordValidator(wordReader);
         LetterTracker letterTracker = new LetterTracker();
 
-        System.out.println("Enter your username: ");                                          // Prompt for username
+        System.out.println("Enter your name: ");                                          // Prompt for username
         String username = "";
         if(scanner.hasNextLine()){
             username = scanner.nextLine().trim();
@@ -53,7 +52,7 @@ public class WordleGame{
             return;
         }
 
-        System.out.println("\nGuess the word! You have 6 attempts.");                         // Game instructions
+        System.out.println("Guess the word! You have 6 attempts.");                         // Game instructions
         letterTracker.displayRemainingLetters();
 
         int maxAttempts = 6;
@@ -63,12 +62,12 @@ public class WordleGame{
         while(attemptsCount < maxAttempts && !hasWon){
             attemptsCount++;
 
-            System.out.print("Enter your guess: ");
-
+            System.out.print("\nEnter your guess: ");
 
             if(!scanner.hasNextLine()){
                 break;
             }
+
             String guess = scanner.nextLine().trim().toUpperCase();
 
 
@@ -90,11 +89,13 @@ public class WordleGame{
                 System.out.println("You won in " + attemptsCount + " attempts!");
             } else {
                 System.out.println("Attempts remaining: " + (maxAttempts - attemptsCount));
-            }
-
-            if(!hasWon){
-                System.out.print("\nGame over, The word was: " + secretWord + "\n" );
+                letterTracker.displayRemainingLetters();
             }
         }
+
+        if(!hasWon){
+            System.out.print("\nGame over, The word was: " + secretWord + "\n" );
+        }
+
     }
 }
