@@ -1,15 +1,16 @@
+import game.FeedbackProvider;
+import game.LetterTracker;
+import game.WordValidator;
 import io.WordReader;
-import java.util.List;
 import java.util.Scanner;
+
 public class WordleGame{
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);  // Initialize scanner for user input
+        Scanner scanner = new Scanner(System.in);                                                // Initialize scanner for user input
+        WordleGame game = new WordleGame();                                                      // Main method to start the game
 
-        WordleGame game = new WordleGame();    // Main method to start the game
-
-        game.showAvailableWords(); // Show all available words for testing
         game.run(scanner, args);
         scanner.close();
 
@@ -20,35 +21,31 @@ public class WordleGame{
             System.out.println("Usage: java WordleGame <word_index>");
             return;
         }
-
         int wordIndex;
-
         try {
-            wordIndex = Integer.parseInt(args[0]); // Parse word index from command line argument
-
+            wordIndex = Integer.parseInt(args[0]);                                              // Parse word index from command line argument
             if (wordIndex < 0) {
-                System.out.println("Word index must be a postive integer.");
+                System.out.println("Error: Word index must be a positive integer.");
                 return;
             }
         } catch (NumberFormatException e) {
             System.out.println("Error: Word index must be a number.");
             return;
-
         }
 
-        WordReader wordReader = new WordReader("wordle-words.txt"); // Create WordReader instance
-        String secretWord = wordReader.getWordByIndex(wordIndex); // Get secret word by
-
-
-        if (secretWord == null) {  // Handle errors gracefully
+        WordReader wordReader = new WordReader("wordle-words.txt");                           // Create WordReader instance
+        String secretWord = wordReader.getWordByIndex(wordIndex);                             // Get secret word by
+        if (secretWord == null) {                                                             // Handle errors gracefully
             System.out.println("Error: Could not load word. Please check the word file.");
-            return; // Exit gracefully
+            return;
         }
 
-        System.out.println("Word loaded successfully!"); // For testing, remove later
+        System.out.println("Word loaded successfully!");                                      // For testing, remove later
+        FeedbackProvider feedbackProvider = new FeedbackProvider();
+        WordValidator validator = new WordValidator(wordReader);
+        LetterTracker letterTracker = new LetterTracker();
 
-
-        System.out.println("Enter your username: "); // Prompt for username
+        System.out.println("Enter your username: ");                                          // Prompt for username
         String username = "";
         if(scanner.hasNextLine()){
             username = scanner.nextLine().trim();
@@ -56,7 +53,8 @@ public class WordleGame{
             return;
         }
 
-        System.out.println("\nGuess the word! You have 6 attempts."); // Game instructions
+        System.out.println("\nGuess the word! You have 6 attempts.");                         // Game instructions
+        letterTracker.displayRemainingLetters();
 
         int maxAttempts = 6;
         int attemptsCount = 0;
@@ -65,7 +63,7 @@ public class WordleGame{
         while(attemptsCount < maxAttempts && !hasWon){
             attemptsCount++;
 
-            System.out.print("Enter your guess: "); // Prompt for guess
+            System.out.print("Enter your guess: ");
 
 
             if(!scanner.hasNextLine()){
@@ -73,10 +71,21 @@ public class WordleGame{
             }
             String guess = scanner.nextLine().trim().toUpperCase();
 
-            System.out.println("Your guess: " + guess); // Display the guess
+
+            if (!validator.isValidGuess(guess)) {                                            // System.out.println("Your guess: " + guess); // Display the guess
+                System.out.println("Invalid guess! Please enter exactly 5 letters.");
+                attemptsCount--;                                                              // Don't count invalid attempts
+                continue;
+            }
 
 
-            if (guess.equals(secretWord)) {  // Check if correct
+            String feedback = feedbackProvider.generateFeedback(guess, secretWord);          // Generate and display feedback
+            System.out.println(feedback);
+
+
+            letterTracker.markWordUsed(guess);                                                // Update letter tracker
+
+            if (guess.equals(secretWord)) {                                                   // Check if correct
                 hasWon = true;
                 System.out.println("You won in " + attemptsCount + " attempts!");
             } else {
@@ -88,21 +97,4 @@ public class WordleGame{
             }
         }
     }
-
-    public void showAvailableWords() {    // Temporary helper to see all available words
-        WordReader reader = new WordReader("wordle-words.txt");
-        List<String> words = reader.readWords();
-
-        if (words == null) {
-            System.out.println("No words found!");
-            return;
-        }
-
-        System.out.println("Available words (" + words.size() + " total):");
-        for (int i = 0; i < words.size(); i++) {
-            System.out.println(i + ": " + words.get(i));
-        }
-    }
-
-
 }
