@@ -9,44 +9,47 @@ import model.GameStats;
 public class WordleGame{
 
     public static void main(String[] args) {
+        
+    Scanner scanner = new Scanner(System.in);
+    WordleGame game = new WordleGame();
+    
+    game.run(scanner, args);
+    scanner.close();
 
-        Scanner scanner = new Scanner(System.in);                                                // Initialize scanner for user input
-        WordleGame game = new WordleGame();                                                      // Main method to start the game
-
-        game.run(scanner, args);
-        scanner.close();
-
-    }
-    public void run( Scanner scanner, String[] args){
+}
+     public void run( Scanner scanner, String[] args){
 
         if(args.length != 1){
-            System.out.println("Usage: java WordleGame <word_index>");
+            System.out.println("Please provide a number as command line argument");
             return;
         }
         int wordIndex;
         try {
-            wordIndex = Integer.parseInt(args[0]);                                              // Parse word index from command line argument
+            wordIndex = Integer.parseInt(args[0]);
             if (wordIndex < 0) {
-                System.out.println("Error: Word index must be a positive integer.");
+                System.out.println("Press Enter to exit...");
+                if (scanner.hasNextLine()) {
+                    scanner.nextLine();
+                }
                 return;
             }
         } catch (NumberFormatException e) {
-            System.out.println("Error: Word index must be a number.");
+            System.out.println("Invalid command-line argument. Please launch with a valid number.");
             return;
         }
 
-        WordReader wordReader = new WordReader("wordle-words.txt");                           // Create WordReader instance
-        String secretWord = wordReader.getWordByIndex(wordIndex);                             // Get secret word by
-        if (secretWord == null) {                                                             // Handle errors gracefully
+        WordReader wordReader = new WordReader("wordle-words.txt");
+        String secretWord = wordReader.getWordByIndex(wordIndex);
+        if (secretWord == null) {
             System.out.println("Error: Could not load word. Please check the word file.");
-            return;
+            return; 
         }
-
+    
         FeedbackProvider feedbackProvider = new FeedbackProvider();
         WordValidator validator = new WordValidator(wordReader);
         LetterTracker letterTracker = new LetterTracker();
 
-        System.out.println("Enter your name: ");                                          // Prompt for username
+        System.out.print("Enter your username: ");
         String username = "";
         if(scanner.hasNextLine()){
             username = scanner.nextLine().trim();
@@ -54,68 +57,93 @@ public class WordleGame{
             return;
         }
 
-        System.out.println("Guess the word! You have 6 attempts.");                         // Game instructions
-        letterTracker.displayRemainingLetters();
+        System.out.println("Welcome to Wordle! Guess the 5-letter word.");
 
         int maxAttempts = 6;
         int attemptsCount = 0;
         boolean hasWon = false;
+        boolean inputEnded = false;
 
         while(attemptsCount < maxAttempts && !hasWon){
-            attemptsCount++;
+             attemptsCount++;
 
-            System.out.print("\nEnter your guess: ");
+            System.out.print("Enter your guess: ");
 
             if(!scanner.hasNextLine()){
-                break;
+                  System.out.print(" ");
+                  inputEnded = true;
+                  break;
             }
 
-            String guess = scanner.nextLine().trim().toUpperCase();
+            String guess = scanner.nextLine().trim().toLowerCase();
 
-
-            if (!validator.isValidGuess(guess)) {                                            // System.out.println("Your guess: " + guess); // Display the guess
-                System.out.println("Invalid guess! Please enter exactly 5 letters.");
-                attemptsCount--;                                                              // Don't count invalid attempts
-                continue;
+            // Check if guess is exactly 5 characters
+            if (guess.length() != 5) {
+               System.out.println(" Your guess must be exactly 5 letters long.");
+               attemptsCount--;
+               continue;
             }
 
+            // Check if all characters are lowercase letters
+            boolean allLetters = true;
+            for (char c : guess.toCharArray()) {
+                if (!Character.isLetter(c) || !Character.isLowerCase(c)) {
+                    allLetters = false;
+                    break;
+                }
+            }
+            if (!allLetters) {
+               System.out.println(" Your guess must only contain lowercase letters.");
+               attemptsCount--;
+               continue;
+            }
 
-            String feedback = feedbackProvider.generateFeedback(guess, secretWord);          // Generate and display feedback
-            System.out.println(feedback);
+            String guessUpper = guess.toUpperCase();
 
+            // Check if word is in the word list
+            if (!validator.isRealWord(guessUpper)) {
+               System.out.println(" Word not in list. Please enter a valid word.");
+               attemptsCount--;
+               continue;
+            }
 
-            letterTracker.markWordUsed(guess);                                                // Update letter tracker
-
-            if (guess.equals(secretWord)) {                                                   // Check if correct
-                hasWon = true;
-                System.out.println("You won in " + attemptsCount + " attempts!");
+            // Check if correct BEFORE showing feedback
+            if (guessUpper.equals(secretWord)) {
+                 hasWon = true;
+                 System.out.println(" Congratulations! You've guessed the word correctly.");
             } else {
-                System.out.println("Attempts remaining: " + (maxAttempts - attemptsCount));
+                String feedback = feedbackProvider.generateFeedback(guessUpper, secretWord);
+                System.out.println(" Feedback: " + feedback);
+            
+                letterTracker.updateLetters(guessUpper, secretWord);
                 letterTracker.displayRemainingLetters();
+                System.out.println("Attempts remaining: " + (maxAttempts - attemptsCount));
             }
         }
 
-        if(!hasWon){
-            System.out.print("\nGame over, The word was: " + secretWord + "\n" );
-        }
-
-        StatsManager statsManager = new StatsManager("stats.csv");
-        String result = hasWon ? "win" : "loss";
-        GameStats gameStats = new GameStats(username, secretWord, attemptsCount, result);
-        statsManager.saveGameStats(gameStats);
-
-        // Ask if user wants to view stats
-        System.out.print("\nWould you like to see your stats? (yes/no): ");
-
-        if (scanner.hasNextLine()) {
-            String response = scanner.nextLine().trim().toLowerCase();
-
-            if (response.equals("yes") || response.equals("y")) {
-                statsManager.displayUserStats(username);
-            } else {
-                System.out.println("\nThanks for playing!");
+            // If input ended prematurely, just exit without game over message
+            if (inputEnded) {
+                return;
             }
-        }
 
+            if(!hasWon){
+                System.out.println("Game over. The correct word was: " + secretWord.toLowerCase());
+            }
+
+            StatsManager statsManager = new StatsManager("stats.csv");
+            String result = hasWon ? "win" : "loss";
+            GameStats gameStats = new GameStats(username, secretWord, attemptsCount, result);
+            statsManager.saveGameStats(gameStats);
+    
+            System.out.print("Do you want to see your stats? (yes/no): ");
+    
+            if (scanner.hasNextLine()) {
+                String response = scanner.nextLine().trim().toLowerCase();
+        
+                if (response.equals("yes") || response.equals("y")) {
+                    statsManager.displayUserStats(username);
+                }
+            }
+        
     }
 }
